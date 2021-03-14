@@ -58,5 +58,17 @@
     "name": "Alec Howard",
     "email": "Donec.elementum@scelerisquescelerisquedui.net",
     "phone": "(748) 206-2688"
+  },
+  {
+    "id": "d6c71014-0a96-4e43-a0d4-df15697e7549",
+    "name": "Mike Shinoda",
+    "email": "ms@gmail.com",
+    "phone": "(692) 802-2949"
+  },
+  {
+    "id": "4a168e88-a887-4c7d-adb9-1867b42ac1d1",
+    "name": "Brad Delson",
+    "email": "bigbrad@gmail.com",
+    "phone": "(672) 125-7080"
   }
 ]
