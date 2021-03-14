@@ -12,6 +12,12 @@
     "phone": "(294) 840-6685"
   },
   {
+    "id": 3,
+    "name": "Kennedy Lane",
+    "email": "mattis.Cras@nonenimMauris.net",
+    "phone": "(542) 451-7038"
+  },
+  {
     "id": 4,
     "name": "Wylie Pope",
     "email": "est@utquamvel.net",
@@ -54,9 +60,15 @@
     "phone": "(748) 206-2688"
   },
   {
-    "id": "f78a8ef5-84d9-4845-bf32-c363ef171b0a",
-    "name": "Mango",
-    "email": "mango@gmail.com",
-    "phone": "322-22-22"
+    "id": "d6c71014-0a96-4e43-a0d4-df15697e7549",
+    "name": "Mike Shinoda",
+    "email": "ms@gmail.com",
+    "phone": "(692) 802-2949"
+  },
+  {
+    "id": "4a168e88-a887-4c7d-adb9-1867b42ac1d1",
+    "name": "Brad Delson",
+    "email": "bigbrad@gmail.com",
+    "phone": "(672) 125-7080"
   }
 ]
