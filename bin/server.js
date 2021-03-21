@@ -15,7 +15,7 @@ const connection = mongoose.connect(uriDb, {
 });
 
 mongoose.connection.on("connected", () => {
-  console.log("Mongoose connected");
+  console.log("Database connection successful");
 });
 
 mongoose.connection.on("error", (err) => {
@@ -32,6 +32,7 @@ connection
       console.log(`Server running. Use our API on port: ${PORT}`);
     });
   })
-  .catch((err) =>
-    console.log(`Server not running. Error message: ${err.message}`)
-  );
+  .catch((err) => {
+    console.log(`Server not running. Error message: ${err.message}`);
+    process.exit(1);
+  });
