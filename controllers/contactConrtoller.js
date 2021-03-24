@@ -43,7 +43,7 @@ const getById = async (req, res, next) => {
 
 const createContact = async (req, res, next) => {
   const { name, email, phone } = req.body;
-
+  const userId = req.user.id
   try {
     if (!name || !email || !phone) {
 
@@ -54,7 +54,7 @@ const createContact = async (req, res, next) => {
       });
     } else {
 
-      const newContact = await addContact(req.body);
+      const newContact = await addContact(req.body, userId);
 
       return res.json({
         status: "success",

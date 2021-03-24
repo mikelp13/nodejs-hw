@@ -15,8 +15,8 @@ const removeContact = async (contactId) => {
   return contactToRemove;
 };
 
-const addContact = async (body) => {
-  const newContact = await Contact.create(body);
+const addContact = async (body, userId) => {
+  const newContact = await Contact.create({...body, owner: userId});
   return newContact;
 };
 

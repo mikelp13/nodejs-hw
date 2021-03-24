@@ -4,8 +4,9 @@ require("../config/passport");
 const guard = (req, res, next) => {
   passport.authenticate("jwt", { session: false }, (err, user) => {
     if (err || !user) {
-      return next({
-        status: 403,
+      return res.status(403).json({
+        status: "error",
+        code: 403,
         message: "Forbidden",
       });
     }
