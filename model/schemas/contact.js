@@ -29,6 +29,11 @@ const contactSchema = new Schema(
     },
 
     token: { type: String },
+
+    owner: {
+      type: SchemaTypes.ObjectId,
+      ref: 'user',
+    },
   },
   { versionKey: false, timestamps: true }
 );
