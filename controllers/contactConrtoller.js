@@ -9,7 +9,7 @@ const {
 
 const getAllContacts = async (req, res, next) => {
   try {
-    const contacts = await listContacts();
+     const contacts = await listContacts(req.query);
     res.json({
       status: "success",
       code: 200,
