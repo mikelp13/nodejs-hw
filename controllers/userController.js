@@ -85,8 +85,37 @@ const logout = async (req, res, next) => {
   }
 };
 
+const getCurrentUser = async(req, res, next) => {
+  try {
+    const { id, email, subscription } = req.user
+    const user = await User.findOne({ _id: id })
+
+    if(!user) {
+      return res.status(401).json({
+        status: "error",
+        code: 401,
+        message: "Not authorized",
+      });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      code: 200,
+      data: {
+        email,
+        subscription,
+      },
+    });
+  
+
+  } catch (err) {
+    next(err)
+  }
+}
+
 module.exports = {
   reg,
   login,
   logout,
+  getCurrentUser,
 };
