@@ -12,6 +12,7 @@ const params = {
 // JWT Strategy
 passport.use(
   new Strategy(params, async (payload, done) => {
+    // console.log(`payload`, payload)
     try {
       const user = await User.findOne({ _id: payload.id });
       if (!user) {
