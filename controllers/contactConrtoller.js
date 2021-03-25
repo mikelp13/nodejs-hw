@@ -6,10 +6,10 @@ const {
   updateContact,
 } = require("../model");
 
-
 const getAllContacts = async (req, res, next) => {
   try {
-     const contacts = await listContacts(req.query);
+    const userId = req.user.id;
+    const contacts = await listContacts(userId, req.query);
     res.json({
       status: "success",
       code: 200,
@@ -21,9 +21,11 @@ const getAllContacts = async (req, res, next) => {
 };
 
 const getById = async (req, res, next) => {
-  const { contactId } = req.params;
   try {
-    const contact = await getContactById(contactId);
+    const { contactId } = req.params;
+    const userId = req.user.id;
+
+    const contact = await getContactById(userId, contactId);
 
     contact
       ? res.json({
@@ -39,21 +41,20 @@ const getById = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 const createContact = async (req, res, next) => {
-  const { name, email, phone } = req.body;
-  const userId = req.user.id
   try {
-    if (!name || !email || !phone) {
+    const { name, email, phone } = req.body;
+    const userId = req.user.id;
 
+    if (!name || !email || !phone) {
       return res.status(400).json({
         status: "error",
         code: 400,
         message: "missing required name field",
       });
     } else {
-
       const newContact = await addContact(req.body, userId);
 
       return res.json({
@@ -65,13 +66,14 @@ const createContact = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 const deleteContact = async (req, res, next) => {
-  const { contactId } = req.params;
-
   try {
-    const contact = await removeContact(contactId);
+    const { contactId } = req.params;
+    const userId = req.user.id;
+
+    const contact = await removeContact(userId, contactId);
 
     contact
       ? res.json({
@@ -87,12 +89,14 @@ const deleteContact = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 const update = async (req, res, next) => {
-  const { body } = req;
-  const { contactId } = req.params;
   try {
+    const { body } = req;
+    const { contactId } = req.params;
+    const userId = req.user.id;
+
     if (Object.keys(body).length === 0) {
       return res.status(400).json({
         status: "error",
@@ -101,7 +105,7 @@ const update = async (req, res, next) => {
       });
     }
 
-    const updatedContact = await updateContact(contactId, body);
+    const updatedContact = await updateContact(userId, contactId, body);
 
     updatedContact
       ? res.json({
@@ -117,7 +121,7 @@ const update = async (req, res, next) => {
   } catch (error) {
     next(err);
   }
-}
+};
 
 module.exports = {
   getAllContacts,
