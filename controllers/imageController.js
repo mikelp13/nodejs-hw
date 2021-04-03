@@ -1,53 +1,46 @@
 const fs = require("fs").promises;
-const multer = require("multer");
 const path = require("path");
 const jimp = require("jimp");
+const User = require("../model/schemas/user");
+const { STORE_IMG } = require("../helpers/imgUploadPath");
 
-const UPLOAD_DIR = path.join(process.cwd(), process.env.UPLOAD_DIR);
-const STORE_IMG = path.join(process.cwd(), "public", "avatars");
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, UPLOAD_DIR);
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-  limits: {
-    fileSize: 2000000,
-  },
-});
+const createAvatar = async (id, pathFile) => {
+  const avatarName = `${id}.jpg`;
+  const img = await jimp.read(pathFile);
+  await img
+    .autocrop()
+    .cover(250, 250, jimp.HORIZONTAL_ALIGN_CENTER || jimp.VERTICAL_ALIGN_TOP)
+    .writeAsync(pathFile);
 
-const upload = multer({
-  storage: storage,
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype.includes("image")) {
-      cb(null, true);
-      return;
-    }
-    cb(null, false);
-  },
-});
+  await fs.rename(pathFile, path.join(STORE_IMG, avatarName));
 
-const uploadImageMiddleware = async (req, res, next) => {
-  console.log(`req.file`, req.file);
+  const avatar = `http://localhost:3000/avatars/${avatarName}`;
+  return avatar;
+};
 
-  if (req.file) {
-    const { file } = req;
-    const img = await jimp.read(file.path);
-    await img
-      .autocrop()
-      .cover(
-        250,
-        250,
-        jimp.HORIZONTAL_ALIGN_CENTER || jimp.VERTICAL_ALIGN_TOP
-      ).writeAsync(file.path);
-    await fs.rename(file.path, path.join(STORE_IMG, file.originalname));
+const updateAvatar = async (req, res, next) => {
+  const id = req.user.id;
+  const pathFile = req.file.path;
+
+  try {
+    const url = await createAvatar(id, pathFile);
+
+    await User.updateOne({ _id: id }, { avatarURL: url }); // update avatar in database
+
+    return res.status(200).json({
+      status: "success",
+      code: 200,
+      data: {
+        avatarURL: url,
+      },
+    });
+  } catch (err) {
+    await fs.unlink(pathFile);
+    return next(err);
   }
-  res.json("/");
 };
 
 module.exports = {
-  upload,
-  uploadImageMiddleware,
+  updateAvatar,
 };

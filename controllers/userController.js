@@ -29,6 +29,7 @@ const reg = async (req, res, next) => {
         user: {
           email: newUser.email,
           subscription: newUser.subscription,
+          avatar: newUser.avatarURL,
         },
       },
     });
@@ -54,7 +55,7 @@ const login = async (req, res, next) => {
     const payload = { id: user._id };
 
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" });
-  
+
     await User.updateOne({ _id: user._id }, { token }); // update token in database
 
     res.json({
@@ -85,12 +86,12 @@ const logout = async (req, res, next) => {
   }
 };
 
-const getCurrentUser = async(req, res, next) => {
+const getCurrentUser = async (req, res, next) => {
   try {
-    const { id, email, subscription } = req.user
-    const user = await User.findOne({ _id: id })
+    const { id, email, subscription } = req.user;
+    const user = await User.findOne({ _id: id });
 
-    if(!user) {
+    if (!user) {
       return res.status(401).json({
         status: "error",
         code: 401,
@@ -106,12 +107,10 @@ const getCurrentUser = async(req, res, next) => {
         subscription,
       },
     });
-  
-
   } catch (err) {
-    next(err)
+    next(err);
   }
-}
+};
 
 module.exports = {
   reg,
