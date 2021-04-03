@@ -20,7 +20,7 @@ app.use(express.json());
 
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.use("/api/images", imagesRouter )
+app.use("/api/avatars", imagesRouter )
 app.use("/api/users", usersRouter);
 app.use("/api/contacts", contactsRouter);
 
