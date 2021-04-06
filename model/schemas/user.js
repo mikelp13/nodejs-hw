@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const bCrypt = require('bcryptjs');
+const bCrypt = require("bcryptjs");
+const gravatar = require("gravatar");
 const SALT_FACTOR = 6;
 
 const userSchema = new Schema(
@@ -29,18 +30,25 @@ const userSchema = new Schema(
     },
 
     token: { type: String },
+
+    avatarURL: {
+      type: String,
+      default: function () {
+        return gravatar.url(this.email, { s: "250" }, true);
+      },
+    },
   },
 
   { versionKey: false, timestamps: true }
 );
 
 userSchema.methods.setPassword = function (password) {
-  this.password = bCrypt.hashSync(password, bCrypt.genSaltSync(SALT_FACTOR))
-}
+  this.password = bCrypt.hashSync(password, bCrypt.genSaltSync(SALT_FACTOR));
+};
 
 userSchema.methods.validPassword = function (password) {
-  return bCrypt.compareSync(password, this.password)
-}
+  return bCrypt.compareSync(password, this.password);
+};
 
 const User = mongoose.model("user", userSchema);
 
