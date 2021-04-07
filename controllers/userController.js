@@ -1,10 +1,12 @@
 const jwt = require("jsonwebtoken");
 const User = require("../model/schemas/user");
 require("dotenv").config();
+const { v4: uuidv4 } = require("uuid");
+const { sendEmail } = require("../helpers/email");
 const SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 const reg = async (req, res, next) => {
-  const { email, password, subscription } = req.body;
+  const { email, password, name, subscription } = req.body;
 
   const user = await User.findOne({ email });
 
@@ -18,9 +20,16 @@ const reg = async (req, res, next) => {
   }
 
   try {
-    const newUser = new User({ email, subscription });
+    const verifyToken = uuidv4();
+
+    await sendEmail(verifyToken, email, name);
+
+    const newUser = new User({ email, subscription, name, verifyToken });
+
     newUser.setPassword(password);
+
     await newUser.save();
+
     res.status(201).json({
       status: "success",
       code: 201,
@@ -43,7 +52,7 @@ const login = async (req, res, next) => {
   try {
     const user = await User.findOne({ email });
 
-    if (!user || !user.validPassword(password)) {
+    if (!user || !user.validPassword(password) || !user.verify) {
       return res.status(400).json({
         status: "error",
         code: 400,
@@ -112,9 +121,38 @@ const getCurrentUser = async (req, res, next) => {
   }
 };
 
+const verify = async (req, res, next) => {
+  try {
+    const { verificationToken } = req.params;
+
+    const user = await User.findOne({ verifyToken: verificationToken });
+
+    if (user) {
+      await user.updateOne({ verify: true, verifyToken: null });
+
+      return res.status(200).json({
+        status: "success",
+        code: 200,
+        data: {
+          message: "Verification successful",
+        },
+      });
+    }
+
+    return res.status(404).json({
+      status: "error",
+      code: 404,
+      message: "User not found",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   reg,
   login,
   logout,
   getCurrentUser,
+  verify,
 };
