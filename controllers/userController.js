@@ -149,10 +149,53 @@ const verify = async (req, res, next) => {
   }
 };
 
+const reverify = async (req, res, next) => {
+  try {
+    const { email, name } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "missing required field email",
+      });
+    }
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        code: 404,
+        message: "User not found",
+      });
+    }
+
+    if (user.verify) {
+      return res.status(400).json({
+        code: 400,
+        message: "Verification has already been passed",
+      });
+    }
+
+    await sendEmail(user.verifyToken, email, name);
+
+    return res.status(200).json({
+      status: "success",
+      code: 200,
+      data: {
+        message: "Verification successful",
+      },
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   reg,
   login,
   logout,
   getCurrentUser,
   verify,
+  reverify,
 };
