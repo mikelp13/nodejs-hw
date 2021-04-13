@@ -8,4 +8,7 @@ router.post("/auth/register", validateUser, ctrlUser.reg);
 router.post("/auth/login", validateUser, ctrlUser.login);
 router.post("/auth/logout", guard, ctrlUser.logout);
 router.get("/current", guard, ctrlUser.getCurrentUser);
+router.get("/verify/:verificationToken", ctrlUser.verify);
+router.post("/verify", ctrlUser.reverify);
+
 module.exports = router;
